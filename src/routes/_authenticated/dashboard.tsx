@@ -54,34 +54,34 @@ function Dashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-semibold">
-            {role === "admin" ? "Admin overview" : role === "authority" ? "Department queue" : "Your reports"}
+            {role === "admin" ? t("Admin overview") : role === "authority" ? t("Department queue") : t("Your reports")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {role === "admin" && "All reports across every department."}
-            {role === "authority" && "Reports routed to your department."}
-            {role === "citizen" && "Track the issues you've reported."}
+            {role === "admin" && t("All reports across every department.")}
+            {role === "authority" && t("Reports routed to your department.")}
+            {role === "citizen" && t("Track the issues you've reported.")}
           </p>
         </div>
         {role === "citizen" && (
           <Link to="/reports/new">
             <Button className="gap-2 bg-gradient-accent text-accent-foreground hover:opacity-95">
-              <PlusCircle className="h-4 w-4" /> New report
+              <PlusCircle className="h-4 w-4" /> {t("New report")}
             </Button>
           </Link>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat icon={ClipboardList} label={role === "citizen" ? "Reports filed" : "Total reports"} value={total} tone="primary" />
-        <Stat icon={Clock} label="Open" value={open} tone="warning" />
-        <Stat icon={AlertTriangle} label="Critical" value={critical} tone="destructive" />
-        <Stat icon={CheckCircle2} label="Resolved" value={resolved} tone="success" />
+        <Stat icon={ClipboardList} label={role === "citizen" ? t("Reports filed") : t("Total reports")} value={total} tone="primary" />
+        <Stat icon={Clock} label={t("Open")} value={open} tone="warning" />
+        <Stat icon={AlertTriangle} label={t("Critical")} value={critical} tone="destructive" />
+        <Stat icon={CheckCircle2} label={t("Resolved")} value={resolved} tone="success" />
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">Recent activity</CardTitle>
-          <Link to="/reports"><Button variant="ghost" size="sm">View all</Button></Link>
+          <CardTitle className="text-lg">{t("Recent activity")}</CardTitle>
+          <Link to="/reports"><Button variant="ghost" size="sm">{t("View all")}</Button></Link>
         </CardHeader>
         <CardContent>
           {q.isLoading ? (
