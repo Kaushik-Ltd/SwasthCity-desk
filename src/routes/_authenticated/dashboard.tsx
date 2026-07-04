@@ -25,6 +25,7 @@ type ReportRow = {
 function Dashboard() {
   const { user, roles, loading } = useAuth();
   const role = primaryRole(roles);
+  const { t } = useI18n();
 
   const q = useQuery({
     queryKey: ["dashboard-reports", user?.id, role],
