@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, PlusCircle, ClipboardList, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { STATUSES, SEVERITIES, DEPARTMENTS, labelOf, severityColor, statusColor, type Status, type Severity, type Department } from "@/lib/civic";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: Dashboard });
 
@@ -25,6 +25,7 @@ type ReportRow = {
 function Dashboard() {
   const { user, roles, loading } = useAuth();
   const role = primaryRole(roles);
+  const { t } = useI18n();
 
   const q = useQuery({
     queryKey: ["dashboard-reports", user?.id, role],
@@ -53,34 +54,34 @@ function Dashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-semibold">
-            {role === "admin" ? "Admin overview" : role === "authority" ? "Department queue" : "Your reports"}
+            {role === "admin" ? t("Admin overview") : role === "authority" ? t("Department queue") : t("Your reports")}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {role === "admin" && "All reports across every department."}
-            {role === "authority" && "Reports routed to your department."}
-            {role === "citizen" && "Track the issues you've reported."}
+            {role === "admin" && t("All reports across every department.")}
+            {role === "authority" && t("Reports routed to your department.")}
+            {role === "citizen" && t("Track the issues you've reported.")}
           </p>
         </div>
         {role === "citizen" && (
           <Link to="/reports/new">
             <Button className="gap-2 bg-gradient-accent text-accent-foreground hover:opacity-95">
-              <PlusCircle className="h-4 w-4" /> New report
+              <PlusCircle className="h-4 w-4" /> {t("New report")}
             </Button>
           </Link>
         )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat icon={ClipboardList} label={role === "citizen" ? "Reports filed" : "Total reports"} value={total} tone="primary" />
-        <Stat icon={Clock} label="Open" value={open} tone="warning" />
-        <Stat icon={AlertTriangle} label="Critical" value={critical} tone="destructive" />
-        <Stat icon={CheckCircle2} label="Resolved" value={resolved} tone="success" />
+        <Stat icon={ClipboardList} label={role === "citizen" ? t("Reports filed") : t("Total reports")} value={total} tone="primary" />
+        <Stat icon={Clock} label={t("Open")} value={open} tone="warning" />
+        <Stat icon={AlertTriangle} label={t("Critical")} value={critical} tone="destructive" />
+        <Stat icon={CheckCircle2} label={t("Resolved")} value={resolved} tone="success" />
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">Recent activity</CardTitle>
-          <Link to="/reports"><Button variant="ghost" size="sm">View all</Button></Link>
+          <CardTitle className="text-lg">{t("Recent activity")}</CardTitle>
+          <Link to="/reports"><Button variant="ghost" size="sm">{t("View all")}</Button></Link>
         </CardHeader>
         <CardContent>
           {q.isLoading ? (
