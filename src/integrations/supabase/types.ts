@@ -22,7 +22,16 @@ export type Database = {
           department: Database["public"]["Enums"]["gov_department"] | null
           full_name: string | null
           id: string
+          onboarded_at: string | null
           phone: string | null
+          preferred_language: string
+          region_city: string | null
+          region_district: string | null
+          region_lat: number | null
+          region_lng: number | null
+          region_municipality: string | null
+          region_pincode: string | null
+          region_state: string | null
           updated_at: string
         }
         Insert: {
@@ -32,7 +41,16 @@ export type Database = {
           department?: Database["public"]["Enums"]["gov_department"] | null
           full_name?: string | null
           id: string
+          onboarded_at?: string | null
           phone?: string | null
+          preferred_language?: string
+          region_city?: string | null
+          region_district?: string | null
+          region_lat?: number | null
+          region_lng?: number | null
+          region_municipality?: string | null
+          region_pincode?: string | null
+          region_state?: string | null
           updated_at?: string
         }
         Update: {
@@ -42,7 +60,16 @@ export type Database = {
           department?: Database["public"]["Enums"]["gov_department"] | null
           full_name?: string | null
           id?: string
+          onboarded_at?: string | null
           phone?: string | null
+          preferred_language?: string
+          region_city?: string | null
+          region_district?: string | null
+          region_lat?: number | null
+          region_lng?: number | null
+          region_municipality?: string | null
+          region_pincode?: string | null
+          region_state?: string | null
           updated_at?: string
         }
         Relationships: []
