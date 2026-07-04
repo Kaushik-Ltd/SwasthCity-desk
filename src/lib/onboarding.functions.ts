@@ -39,7 +39,8 @@ export const updateMyPreferences = createServerFn({ method: "POST" })
 
     const { error } = await context.supabase
       .from("profiles")
-      .update(patch)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .update(patch as any)
       .eq("id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
