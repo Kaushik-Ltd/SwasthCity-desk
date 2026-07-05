@@ -125,7 +125,8 @@ function SignInForm({ onForgot }: { onForgot: () => void }) {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Signed in");
-    navigate({ to: "/dashboard", replace: true });
+    const to = await routeAfterAuth();
+    navigate({ to, replace: true });
   }
 
   return (
