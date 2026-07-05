@@ -30,10 +30,12 @@ function ReportsList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reports").select("id,title,description,status,severity,department,category,created_at,reporter_id")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(200);
       if (error) throw error;
       return (data ?? []) as Row[];
     },
+    staleTime: 60_000,
   });
 
   const filtered = useMemo(() => {
