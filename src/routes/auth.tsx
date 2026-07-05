@@ -164,7 +164,7 @@ function SignUpForm() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Account created — check your email if confirmation is required.");
-    window.location.href = "/dashboard";
+    window.location.href = "/welcome";
   }
 
   return (
