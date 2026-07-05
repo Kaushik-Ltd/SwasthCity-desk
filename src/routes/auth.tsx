@@ -17,13 +17,28 @@ const emailSchema = z.string().trim().email("Enter a valid email").max(255);
 const passwordSchema = z.string().min(8, "At least 8 characters").max(72);
 const nameSchema = z.string().trim().min(2, "Enter your name").max(80);
 
+async function routeAfterAuth(): Promise<"/welcome" | "/dashboard"> {
+  const { data: userData } = await supabase.auth.getUser();
+  const uid = userData.user?.id;
+  if (!uid) return "/dashboard";
+  const { data: prof } = await supabase
+    .from("profiles")
+    .select("onboarded_at")
+    .eq("id", uid)
+    .maybeSingle();
+  return prof?.onboarded_at ? "/dashboard" : "/welcome";
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<"signin" | "signup" | "forgot">("signin");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard", replace: true });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (data.session) {
+        const to = await routeAfterAuth();
+        navigate({ to, replace: true });
+      }
     });
   }, [navigate]);
 
