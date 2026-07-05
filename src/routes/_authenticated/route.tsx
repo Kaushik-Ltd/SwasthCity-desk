@@ -7,22 +7,19 @@ import { isLanguageCode, type LanguageCode } from "@/lib/languages";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
 
-    // First-run onboarding gate.
+    // Load preferred language for the i18n provider. The Welcome / onboarding
+    // screen is shown once right after sign-in from /auth — it is NOT a gate
+    // on every authenticated route, so navigating to /reports/new (or
+    // anywhere else) never redirects here.
     const { data: prof } = await supabase
       .from("profiles")
-      .select("preferred_language, onboarded_at")
+      .select("preferred_language")
       .eq("id", data.user.id)
       .maybeSingle();
-
-    const needsOnboarding = !prof?.onboarded_at;
-    const onWelcome = location.pathname.startsWith("/welcome");
-    if (needsOnboarding && !onWelcome) {
-      throw redirect({ to: "/welcome" });
-    }
 
     return {
       user: data.user,
