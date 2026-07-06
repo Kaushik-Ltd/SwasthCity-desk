@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { STATUSES, SEVERITIES, DEPARTMENTS, labelOf, severityColor, statusColor, type Status, type Severity, type Department } from "@/lib/civic";
 import { useI18n } from "@/lib/i18n";
+import { CivicAuthorityCard } from "@/components/CivicAuthorityCard";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({ component: Dashboard });
 
@@ -108,6 +109,8 @@ function Dashboard() {
           )}
         </CardContent>
       </Card>
+
+      <CivicAuthorityCard />
     </div>
   );
 }
