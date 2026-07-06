@@ -94,13 +94,15 @@ function AuthPage() {
 }
 
 function GoogleButton() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   async function go() {
     setLoading(true);
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (res.error) { toast.error(res.error.message); setLoading(false); return; }
     if (res.redirected) return;
-    window.location.href = "/dashboard";
+    const to = await routeAfterAuth();
+    navigate({ to, replace: true });
   }
   return (
     <Button variant="outline" className="w-full gap-2" onClick={go} disabled={loading}>
