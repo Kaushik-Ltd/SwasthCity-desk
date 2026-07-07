@@ -8,6 +8,7 @@ import { isLanguageCode, type LanguageCode } from "@/lib/languages";
 type SessionInfo = {
   userId: string;
   initialLanguage: LanguageCode;
+  onboarded: boolean;
 };
 
 // In-memory cache so beforeLoad doesn't hit the network on every navigation.
@@ -24,13 +25,14 @@ async function loadSessionInfo(): Promise<SessionInfo> {
 
   const { data: prof } = await supabase
     .from("profiles")
-    .select("preferred_language")
+    .select("preferred_language, onboarded_at")
     .eq("id", session.user.id)
     .maybeSingle();
 
   const info: SessionInfo = {
     userId: session.user.id,
     initialLanguage: (isLanguageCode(prof?.preferred_language) ? prof?.preferred_language : "en") as LanguageCode,
+    onboarded: Boolean(prof?.onboarded_at),
   };
   sessionCache = { key: cacheKey, value: info };
   return info;
@@ -45,9 +47,18 @@ if (typeof window !== "undefined") {
   });
 }
 
+// Allow onboarding itself (and its dependencies) to render without the gate.
+const ONBOARDING_EXEMPT = new Set<string>(["/welcome"]);
+
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => loadSessionInfo(),
+  beforeLoad: async ({ location }) => {
+    const info = await loadSessionInfo();
+    if (!info.onboarded && !ONBOARDING_EXEMPT.has(location.pathname)) {
+      throw redirect({ to: "/welcome", replace: true });
+    }
+    return info;
+  },
   component: Layout,
 });
 
