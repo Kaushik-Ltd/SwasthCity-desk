@@ -121,7 +121,7 @@ function WelcomeScreen() {
           <Globe className="h-7 w-7" />
         </div>
         <h1 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-          {t("Welcome to CivicWatch AI")}
+          {t("Welcome to SwasthCity")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground sm:text-base">
           {t("Pick your language and region so we can route your reports to the right department.")}

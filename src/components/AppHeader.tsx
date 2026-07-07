@@ -26,7 +26,7 @@ export function AppHeader() {
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-hero text-primary-foreground shadow-elev-1">
             <Shield className="h-5 w-5" />
           </span>
-          CivicWatch <span className="text-primary">AI</span>
+          SwasthCity
         </Link>
 
         {!loading && user ? (
