@@ -18,7 +18,7 @@ const DEPARTMENTS = [
 ] as const;
 const SEVERITIES = ["low", "medium", "high", "critical"] as const;
 
-const SYSTEM_PROMPT = `You are CivicWatch AI, an assistant that analyzes photos of public-infrastructure problems reported by citizens.
+const SYSTEM_PROMPT = `You are SwasthCity, an assistant that analyzes photos of public-infrastructure problems reported by citizens.
 
 For each image, return STRICT JSON with these fields:
 - title: short human title (max 60 chars)

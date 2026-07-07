@@ -33,7 +33,7 @@ function Landing() {
               A smarter way for cities to hear their citizens.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-primary-foreground/85">
-              CivicWatch AI turns a single photo into a routed, prioritised civic report — connecting citizens directly to the government team that can fix it.
+              SwasthCity turns a single photo into a routed, prioritised civic report — connecting citizens directly to the government team that can fix it.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link to="/auth">
@@ -95,7 +95,7 @@ function Landing() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 text-xs text-muted-foreground sm:px-6">
-          <span>© {new Date().getFullYear()} CivicWatch AI</span>
+          <span>© {new Date().getFullYear()} SwasthCity</span>
           <span>Built for citizens & governments</span>
         </div>
       </footer>

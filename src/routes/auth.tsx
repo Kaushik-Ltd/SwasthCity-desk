@@ -49,7 +49,7 @@ function AuthPage() {
         <div className="relative flex h-full flex-col justify-between p-12 text-primary-foreground">
           <Link to="/" className="flex items-center gap-2 font-display text-lg font-semibold">
             <span className="grid h-9 w-9 place-items-center rounded-lg bg-white/15"><Shield className="h-5 w-5" /></span>
-            CivicWatch AI
+            SwasthCity
           </Link>
           <div className="max-w-md">
             <h1 className="font-display text-4xl font-semibold leading-tight">Report a broken streetlight in under 30 seconds.</h1>
@@ -66,7 +66,7 @@ function AuthPage() {
               {tab === "forgot" ? "Reset password" : tab === "signup" ? "Create your account" : "Welcome back"}
             </CardTitle>
             <CardDescription>
-              {tab === "forgot" ? "We'll email you a reset link." : tab === "signup" ? "Get started with a free citizen account." : "Sign in to continue to CivicWatch AI."}
+              {tab === "forgot" ? "We'll email you a reset link." : tab === "signup" ? "Get started with a free citizen account." : "Sign in to continue to SwasthCity."}
             </CardDescription>
           </CardHeader>
           <CardContent>
