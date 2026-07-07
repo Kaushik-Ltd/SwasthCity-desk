@@ -28,11 +28,11 @@ export const translateBatch = createServerFn({ method: "POST" })
     const def = LANGUAGE_MAP[lang];
     const numbered = data.texts.map((t, i) => `${i + 1}. ${t.replace(/\n/g, " ")}`).join("\n");
 
-    const system = `You are a professional UI translator for an Indian civic-issue reporting app called CivicWatch AI.
+    const system = `You are a professional UI translator for an Indian civic-issue reporting app called SwasthCity.
 Translate each numbered English UI string into ${def.aiName}.
 Rules:
 - Keep translations short and natural for a mobile app UI.
-- Preserve proper nouns like "CivicWatch AI" as-is.
+- Preserve proper nouns like "SwasthCity" as-is.
 - Do NOT translate placeholders written in {curly_braces}.
 - Return ONLY strict JSON: {"items":[{"i":1,"t":"..."},{"i":2,"t":"..."}]} with one entry per input, in order.`;
 
