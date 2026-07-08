@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({ component: AuthPage });
 
@@ -31,6 +32,7 @@ async function routeAfterAuth(): Promise<"/welcome" | "/dashboard"> {
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [tab, setTab] = useState<"signin" | "signup" | "forgot">("signin");
 
   useEffect(() => {
@@ -52,10 +54,10 @@ function AuthPage() {
             SwasthCity
           </Link>
           <div className="max-w-md">
-            <h1 className="font-display text-4xl font-semibold leading-tight">Report a broken streetlight in under 30 seconds.</h1>
-            <p className="mt-4 text-primary-foreground/80">Sign in as a citizen to file reports, or as an authority to triage your department's queue.</p>
+            <h1 className="font-display text-4xl font-semibold leading-tight">{t("Report a broken streetlight in under 30 seconds.")}</h1>
+            <p className="mt-4 text-primary-foreground/80">{t("Sign in as a citizen to file reports, or as an authority to triage your department's queue.")}</p>
           </div>
-          <div className="text-xs text-primary-foreground/60">Your reports are private to you and the assigned department.</div>
+          <div className="text-xs text-primary-foreground/60">{t("Your reports are private to you and the assigned department.")}</div>
         </div>
       </div>
 
@@ -63,10 +65,10 @@ function AuthPage() {
         <Card className="w-full max-w-md border-border shadow-elev-2">
           <CardHeader>
             <CardTitle className="font-display text-2xl">
-              {tab === "forgot" ? "Reset password" : tab === "signup" ? "Create your account" : "Welcome back"}
+              {tab === "forgot" ? t("Reset password") : tab === "signup" ? t("Create your account") : t("Welcome back")}
             </CardTitle>
             <CardDescription>
-              {tab === "forgot" ? "We'll email you a reset link." : tab === "signup" ? "Get started with a free citizen account." : "Sign in to continue to SwasthCity."}
+              {tab === "forgot" ? t("We'll email you a reset link.") : tab === "signup" ? t("Get started with a free citizen account.") : t("Sign in to continue to SwasthCity.")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -75,8 +77,8 @@ function AuthPage() {
             ) : (
               <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign in</TabsTrigger>
-                  <TabsTrigger value="signup">Sign up</TabsTrigger>
+                  <TabsTrigger value="signin">{t("Sign in")}</TabsTrigger>
+                  <TabsTrigger value="signup">{t("Sign up")}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="signin" className="mt-6">
                   <SignInForm onForgot={() => setTab("forgot")} />
@@ -95,6 +97,7 @@ function AuthPage() {
 
 function GoogleButton() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   async function go() {
     setLoading(true);
@@ -107,13 +110,14 @@ function GoogleButton() {
   return (
     <Button variant="outline" className="w-full gap-2" onClick={go} disabled={loading}>
       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
-      Continue with Google
+      {t("Continue with Google")}
     </Button>
   );
 }
 
 function SignInForm({ onForgot }: { onForgot: () => void }) {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -121,12 +125,12 @@ function SignInForm({ onForgot }: { onForgot: () => void }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const p = emailSchema.safeParse(email);
-    if (!p.success) { toast.error(p.error.issues[0].message); return; }
+    if (!p.success) { toast.error(t(p.error.issues[0].message)); return; }
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email: p.data, password });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Signed in");
+    toast.success(t("Signed in"));
     const to = await routeAfterAuth();
     navigate({ to, replace: true });
   }
@@ -135,15 +139,16 @@ function SignInForm({ onForgot }: { onForgot: () => void }) {
     <form onSubmit={submit} className="space-y-4">
       <GoogleButton />
       <Divider />
-      <Field icon={Mail} label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" autoComplete="email" />
-      <Field icon={Lock} label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" autoComplete="current-password" />
-      <button type="button" onClick={onForgot} className="text-xs font-medium text-primary hover:underline">Forgot password?</button>
-      <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sign in"}</Button>
+      <Field icon={Mail} label={t("Email")} type="email" value={email} onChange={setEmail} placeholder="you@example.com" autoComplete="email" />
+      <Field icon={Lock} label={t("Password")} type="password" value={password} onChange={setPassword} placeholder="••••••••" autoComplete="current-password" />
+      <button type="button" onClick={onForgot} className="text-xs font-medium text-primary hover:underline">{t("Forgot password?")}</button>
+      <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Sign in")}</Button>
     </form>
   );
 }
 
 function SignUpForm() {
+  const { t } = useI18n();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -154,9 +159,9 @@ function SignUpForm() {
     const n = nameSchema.safeParse(name);
     const em = emailSchema.safeParse(email);
     const pw = passwordSchema.safeParse(password);
-    if (!n.success) return toast.error(n.error.issues[0].message);
-    if (!em.success) return toast.error(em.error.issues[0].message);
-    if (!pw.success) return toast.error(pw.error.issues[0].message);
+    if (!n.success) return toast.error(t(n.error.issues[0].message));
+    if (!em.success) return toast.error(t(em.error.issues[0].message));
+    if (!pw.success) return toast.error(t(pw.error.issues[0].message));
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email: em.data,
@@ -165,7 +170,7 @@ function SignUpForm() {
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("Account created — check your email if confirmation is required.");
+    toast.success(t("Account created — check your email if confirmation is required."));
     window.location.href = "/welcome";
   }
 
@@ -173,34 +178,35 @@ function SignUpForm() {
     <form onSubmit={submit} className="space-y-4">
       <GoogleButton />
       <Divider />
-      <Field icon={UserIcon} label="Full name" value={name} onChange={setName} placeholder="Ada Lovelace" autoComplete="name" />
-      <Field icon={Mail} label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" autoComplete="email" />
-      <Field icon={Lock} label="Password" type="password" value={password} onChange={setPassword} placeholder="At least 8 characters" autoComplete="new-password" />
-      <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create account"}</Button>
+      <Field icon={UserIcon} label={t("Full name")} value={name} onChange={setName} placeholder={t("Ada Lovelace")} autoComplete="name" />
+      <Field icon={Mail} label={t("Email")} type="email" value={email} onChange={setEmail} placeholder="you@example.com" autoComplete="email" />
+      <Field icon={Lock} label={t("Password")} type="password" value={password} onChange={setPassword} placeholder={t("At least 8 characters")} autoComplete="new-password" />
+      <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Create account")}</Button>
     </form>
   );
 }
 
 function ForgotForm({ onBack }: { onBack: () => void }) {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const p = emailSchema.safeParse(email);
-    if (!p.success) return toast.error(p.error.issues[0].message);
+    if (!p.success) return toast.error(t(p.error.issues[0].message));
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(p.data, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     setLoading(false);
     if (error) return toast.error(error.message);
-    toast.success("If an account exists, a reset link is on its way.");
+    toast.success(t("If an account exists, a reset link is on its way."));
   }
   return (
     <form onSubmit={submit} className="space-y-4">
-      <Field icon={Mail} label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" autoComplete="email" />
-      <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send reset link"}</Button>
-      <button type="button" onClick={onBack} className="w-full text-xs font-medium text-muted-foreground hover:text-foreground">Back to sign in</button>
+      <Field icon={Mail} label={t("Email")} type="email" value={email} onChange={setEmail} placeholder="you@example.com" autoComplete="email" />
+      <Button type="submit" className="w-full" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("Send reset link")}</Button>
+      <button type="button" onClick={onBack} className="w-full text-xs font-medium text-muted-foreground hover:text-foreground">{t("Back to sign in")}</button>
     </form>
   );
 }
