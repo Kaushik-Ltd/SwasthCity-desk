@@ -32,6 +32,7 @@ async function routeAfterAuth(): Promise<"/welcome" | "/dashboard"> {
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [tab, setTab] = useState<"signin" | "signup" | "forgot">("signin");
 
   useEffect(() => {
@@ -53,10 +54,10 @@ function AuthPage() {
             SwasthCity
           </Link>
           <div className="max-w-md">
-            <h1 className="font-display text-4xl font-semibold leading-tight">Report a broken streetlight in under 30 seconds.</h1>
-            <p className="mt-4 text-primary-foreground/80">Sign in as a citizen to file reports, or as an authority to triage your department's queue.</p>
+            <h1 className="font-display text-4xl font-semibold leading-tight">{t("Report a broken streetlight in under 30 seconds.")}</h1>
+            <p className="mt-4 text-primary-foreground/80">{t("Sign in as a citizen to file reports, or as an authority to triage your department's queue.")}</p>
           </div>
-          <div className="text-xs text-primary-foreground/60">Your reports are private to you and the assigned department.</div>
+          <div className="text-xs text-primary-foreground/60">{t("Your reports are private to you and the assigned department.")}</div>
         </div>
       </div>
 
@@ -64,10 +65,10 @@ function AuthPage() {
         <Card className="w-full max-w-md border-border shadow-elev-2">
           <CardHeader>
             <CardTitle className="font-display text-2xl">
-              {tab === "forgot" ? "Reset password" : tab === "signup" ? "Create your account" : "Welcome back"}
+              {tab === "forgot" ? t("Reset password") : tab === "signup" ? t("Create your account") : t("Welcome back")}
             </CardTitle>
             <CardDescription>
-              {tab === "forgot" ? "We'll email you a reset link." : tab === "signup" ? "Get started with a free citizen account." : "Sign in to continue to SwasthCity."}
+              {tab === "forgot" ? t("We'll email you a reset link.") : tab === "signup" ? t("Get started with a free citizen account.") : t("Sign in to continue to SwasthCity.")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -76,8 +77,8 @@ function AuthPage() {
             ) : (
               <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign in</TabsTrigger>
-                  <TabsTrigger value="signup">Sign up</TabsTrigger>
+                  <TabsTrigger value="signin">{t("Sign in")}</TabsTrigger>
+                  <TabsTrigger value="signup">{t("Sign up")}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="signin" className="mt-6">
                   <SignInForm onForgot={() => setTab("forgot")} />
