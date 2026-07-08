@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { STATUSES, SEVERITIES, DEPARTMENTS, CATEGORIES, labelOf, severityColor, statusColor, type Status } from "@/lib/civic";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/reports/$id")({ component: ReportDetail });
 
@@ -36,13 +37,14 @@ function ReportDetail() {
   const qc = useQueryClient();
   const { user, roles } = useAuth();
   const role = primaryRole(roles);
+  const { t } = useI18n();
 
   const q = useQuery({
     queryKey: ["report", id],
     queryFn: async () => {
       const { data, error } = await supabase.from("reports").select("*").eq("id", id).maybeSingle();
       if (error) throw error;
-      if (!data) throw new Error("Report not found");
+      if (!data) throw new Error(t("Report not found"));
       return data;
     },
   });
@@ -63,12 +65,12 @@ function ReportDetail() {
 
   const postUpdate = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error("Not signed in");
-      if (!message.trim() && !newStatus) throw new Error("Nothing to post");
+      if (!user) throw new Error(t("Not signed in"));
+      if (!message.trim() && !newStatus) throw new Error(t("Nothing to post"));
       const insert = {
         report_id: id,
         author_id: user.id,
-        message: message.trim() || `Status changed to ${labelOf(STATUSES, newStatus as Status)}`,
+        message: message.trim() || `${t("Status changed to")} ${t(labelOf(STATUSES, newStatus as Status))}`,
         new_status: newStatus ? (newStatus as never) : null,
       };
       const { error } = await supabase.from("report_updates").insert(insert);
@@ -82,9 +84,9 @@ function ReportDetail() {
       setMessage(""); setNewStatus("");
       qc.invalidateQueries({ queryKey: ["report", id] });
       qc.invalidateQueries({ queryKey: ["report-updates", id] });
-      toast.success("Update posted");
+      toast.success(t("Update posted"));
     },
-    onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : t("Failed")),
   });
 
   if (q.isLoading) return <div className="grid min-h-[40vh] place-items-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
@@ -96,19 +98,19 @@ function ReportDetail() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <Link to="/reports" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to reports
+        <ArrowLeft className="h-4 w-4" /> {t("Back to reports")}
       </Link>
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">{labelOf(CATEGORIES, r.category)}</Badge>
-            <Badge className={severityColor(r.severity)}>{labelOf(SEVERITIES, r.severity)}</Badge>
-            <Badge className={statusColor(r.status)} variant="secondary">{labelOf(STATUSES, r.status)}</Badge>
+            <Badge variant="outline">{t(labelOf(CATEGORIES, r.category))}</Badge>
+            <Badge className={severityColor(r.severity)}>{t(labelOf(SEVERITIES, r.severity))}</Badge>
+            <Badge className={statusColor(r.status)} variant="secondary">{t(labelOf(STATUSES, r.status))}</Badge>
           </div>
           <h1 className="mt-3 font-display text-3xl font-semibold">{r.title}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Filed {new Date(r.created_at).toLocaleString()} · Assigned to {labelOf(DEPARTMENTS, r.department)}
+            {t("Filed")} {new Date(r.created_at).toLocaleString()} · {t("Assigned to")} {t(labelOf(DEPARTMENTS, r.department))}
           </p>
         </div>
       </div>
@@ -124,7 +126,7 @@ function ReportDetail() {
                       p.match(/\.(mp4|mov|webm)$/i) ? (
                         <video src={media[p]} controls className="w-full" />
                       ) : (
-                        <img src={media[p]} alt="Report media" className="w-full object-cover" />
+                        <img src={media[p]} alt={t("Report media")} className="w-full object-cover" />
                       )
                     ) : (
                       <div className="grid h-40 place-items-center"><Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /></div>
@@ -137,7 +139,7 @@ function ReportDetail() {
 
           {r.description && (
             <Card>
-              <CardHeader><CardTitle className="text-base">Description</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">{t("Description")}</CardTitle></CardHeader>
               <CardContent className="text-sm leading-relaxed">{r.description}</CardContent>
             </Card>
           )}
@@ -146,32 +148,32 @@ function ReportDetail() {
             <Card className="border-primary/30 bg-primary/[0.03]">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Sparkles className="h-4 w-4 text-primary" /> AI analysis
+                  <Sparkles className="h-4 w-4 text-primary" /> {t("AI analysis")}
                   {typeof r.ai_confidence === "number" && (
-                    <Badge variant="outline" className="ml-auto">Confidence {Math.round(r.ai_confidence * 100)}%</Badge>
+                    <Badge variant="outline" className="ml-auto">{t("Confidence")} {Math.round(r.ai_confidence * 100)}%</Badge>
                   )}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
-                {(r.ai_analysis as { reasoning?: string })?.reasoning ?? "Analyzed automatically."}
+                {(r.ai_analysis as { reasoning?: string })?.reasoning ?? t("Analyzed automatically.")}
               </CardContent>
             </Card>
           )}
 
           <Card>
-            <CardHeader><CardTitle className="text-base">Activity</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base">{t("Activity")}</CardTitle></CardHeader>
             <CardContent>
               {updates.isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
               ) : (updates.data ?? []).length === 0 ? (
-                <p className="text-sm text-muted-foreground">No updates yet.</p>
+                <p className="text-sm text-muted-foreground">{t("No updates yet.")}</p>
               ) : (
                 <ol className="space-y-4">
                   {(updates.data ?? []).map((u) => (
                     <li key={u.id} className="rounded-lg border border-border bg-muted/40 p-3 text-sm">
                       <div className="text-xs text-muted-foreground">{new Date(u.created_at).toLocaleString()}</div>
                       <div className="mt-1">{u.message}</div>
-                      {u.new_status && <Badge className={statusColor(u.new_status as Status)} variant="secondary">Status: {labelOf(STATUSES, u.new_status)}</Badge>}
+                      {u.new_status && <Badge className={statusColor(u.new_status as Status)} variant="secondary">{t("Status")}: {t(labelOf(STATUSES, u.new_status))}</Badge>}
                     </li>
                   ))}
                 </ol>
@@ -179,19 +181,19 @@ function ReportDetail() {
 
               {canComment && (
                 <div className="mt-4 space-y-3 border-t border-border pt-4">
-                  <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder={canAct ? "Post an update to the citizen…" : "Add more context to your report…"} rows={3} maxLength={800} />
+                  <Textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder={canAct ? t("Post an update to the citizen…") : t("Add more context to your report…")} rows={3} maxLength={800} />
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     {canAct && (
                       <Select value={newStatus} onValueChange={setNewStatus}>
-                        <SelectTrigger className="w-[200px]"><SelectValue placeholder="Change status (optional)" /></SelectTrigger>
+                        <SelectTrigger className="w-[200px]"><SelectValue placeholder={t("Change status (optional)")} /></SelectTrigger>
                         <SelectContent>
-                          {STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                          {STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{t(s.label)}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     )}
                     <Button onClick={() => postUpdate.mutate()} disabled={postUpdate.isPending} className="gap-2 ml-auto">
                       {postUpdate.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                      Post update
+                      {t("Post update")}
                     </Button>
                   </div>
                 </div>
@@ -202,14 +204,14 @@ function ReportDetail() {
 
         <div className="space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-base">Location</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base">{t("Location")}</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
               {r.location_text ? (
                 <div className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" /><span>{r.location_text}</span></div>
-              ) : <span className="text-muted-foreground">No address given</span>}
+              ) : <span className="text-muted-foreground">{t("No address given")}</span>}
               {typeof r.latitude === "number" && typeof r.longitude === "number" && (
                 <a className="block text-primary hover:underline" target="_blank" rel="noreferrer" href={`https://www.openstreetmap.org/?mlat=${r.latitude}&mlon=${r.longitude}#map=17/${r.latitude}/${r.longitude}`}>
-                  View on map ↗
+                  {t("View on map")} ↗
                 </a>
               )}
             </CardContent>
