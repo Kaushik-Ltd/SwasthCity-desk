@@ -1,8 +1,8 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
-import { LanguageProvider } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 import { isLanguageCode, type LanguageCode } from "@/lib/languages";
 
 type SessionInfo = {
@@ -11,8 +11,6 @@ type SessionInfo = {
   onboarded: boolean;
 };
 
-// In-memory cache so beforeLoad doesn't hit the network on every navigation.
-// Keyed by access-token expiry so it invalidates on sign-in / sign-out.
 let sessionCache: { key: string; value: SessionInfo } | null = null;
 
 async function loadSessionInfo(): Promise<SessionInfo> {
@@ -38,7 +36,6 @@ async function loadSessionInfo(): Promise<SessionInfo> {
   return info;
 }
 
-// Reset the cache when auth state changes so a fresh sign-in re-reads the profile.
 if (typeof window !== "undefined") {
   supabase.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
@@ -47,7 +44,6 @@ if (typeof window !== "undefined") {
   });
 }
 
-// Allow onboarding itself (and its dependencies) to render without the gate.
 const ONBOARDING_EXEMPT = new Set<string>(["/welcome"]);
 
 export const Route = createFileRoute("/_authenticated")({
@@ -64,17 +60,24 @@ export const Route = createFileRoute("/_authenticated")({
 
 function Layout() {
   const { initialLanguage } = Route.useRouteContext();
-  const [lang] = useState<LanguageCode>(initialLanguage);
+  const { language, setLanguage } = useI18n();
+
+  // Sync the user's saved profile language into the shared i18n context on first mount.
+  useEffect(() => {
+    if (initialLanguage && initialLanguage !== language) {
+      void setLanguage(initialLanguage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialLanguage]);
 
   return (
-    <LanguageProvider initialLanguage={lang}>
-      <div className="min-h-screen bg-background">
-        <AppHeader />
-        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-          <Outlet />
-        </main>
-      </div>
-    </LanguageProvider>
+    <div className="min-h-screen bg-background">
+      <AppHeader />
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <Outlet />
+      </main>
+    </div>
   );
 }
+
 
