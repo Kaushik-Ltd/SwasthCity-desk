@@ -136,15 +136,16 @@ function Stat({ icon: Icon, label, value, tone }: { icon: React.ComponentType<{ 
 }
 
 function EmptyState({ role }: { role: string }) {
+  const { t } = useI18n();
   return (
     <div className="grid place-items-center py-14 text-center">
       <ClipboardList className="h-8 w-8 text-muted-foreground" />
       <p className="mt-3 text-sm text-muted-foreground">
-        {role === "citizen" ? "You haven't filed any reports yet." : "Nothing in the queue right now."}
+        {role === "citizen" ? t("You haven't filed any reports yet.") : t("Nothing in the queue right now.")}
       </p>
       {role === "citizen" && (
         <Link to="/reports/new" className="mt-4">
-          <Button size="sm" className="gap-2"><PlusCircle className="h-4 w-4" /> File your first report</Button>
+          <Button size="sm" className="gap-2"><PlusCircle className="h-4 w-4" /> {t("File your first report")}</Button>
         </Link>
       )}
     </div>
