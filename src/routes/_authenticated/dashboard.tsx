@@ -96,12 +96,12 @@ function Dashboard() {
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-medium text-foreground">{r.title}</div>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      {labelOf(DEPARTMENTS, r.department)} · {new Date(r.created_at).toLocaleDateString()}
+                      {t(labelOf(DEPARTMENTS, r.department))} · {new Date(r.created_at).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge className={severityColor(r.severity)}>{labelOf(SEVERITIES, r.severity)}</Badge>
-                    <Badge className={statusColor(r.status)} variant="secondary">{labelOf(STATUSES, r.status)}</Badge>
+                    <Badge className={severityColor(r.severity)}>{t(labelOf(SEVERITIES, r.severity))}</Badge>
+                    <Badge className={statusColor(r.status)} variant="secondary">{t(labelOf(STATUSES, r.status))}</Badge>
                   </div>
                 </Link>
               ))}
